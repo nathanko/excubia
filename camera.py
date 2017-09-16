@@ -17,8 +17,33 @@ class VideoCamera(object):
     
     def get_frame(self):
         success, image = self.video.read()
+        
+        # https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/
+        
+        cascPath = "haarcascade_frontalface_default.xml"
+        faceCascade = cv2.CascadeClassifier(cascPath)
+
+
+        #Cool AI Stuff
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        faces = faceCascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30),
+            #flags=cv2.cv.CV_HAAR_SCALE_IMAGE
+            flags=cv2.CASCADE_SCALE_IMAGE
+        )
+
+        # Draw a rectangle around the faces
+        for (x, y, w, h) in faces:
+            cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+
         # We are using Motion JPEG, but OpenCV defaults to capture raw images,
         # so we must encode it into JPEG in order to correctly display the
         # video stream.
         ret, jpeg = cv2.imencode('.jpg', image)
+
         return jpeg.tobytes()
