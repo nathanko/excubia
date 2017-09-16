@@ -29,9 +29,9 @@ class VideoCamera(object):
 
         faces = faceCascade.detectMultiScale(
             gray,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(30, 30),
+            scaleFactor=1.2,
+            minNeighbors=3,
+            minSize=(15, 15),
             #flags=cv2.cv.CV_HAAR_SCALE_IMAGE
             flags=cv2.CASCADE_SCALE_IMAGE
         )
