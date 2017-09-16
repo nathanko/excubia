@@ -19,7 +19,7 @@ class VideoCamera(object):
         success, image = self.video.read()
         
         # https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/
-        
+
         cascPath = "haarcascade_frontalface_default.xml"
         faceCascade = cv2.CascadeClassifier(cascPath)
 
@@ -39,6 +39,7 @@ class VideoCamera(object):
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        print ("Number of faces: {}".format(faces.length))
 
 
         # We are using Motion JPEG, but OpenCV defaults to capture raw images,
