@@ -39,7 +39,7 @@ class VideoCamera(object):
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        print ("Number of faces: {}".format(faces.length))
+        print ("Number of faces: {}".format(len(faces)))
 
 
         # We are using Motion JPEG, but OpenCV defaults to capture raw images,
