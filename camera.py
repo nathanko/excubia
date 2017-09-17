@@ -15,11 +15,13 @@ from pymongo import MongoClient
 
 args = {'cascPath': 'data/haarcascade_frontalface_default.xml',
         'shape_predictor': 'data/shape_predictor_68_face_landmarks.dat'}
-client = MongoClient('mongodb://excubia:Incredible54@ds139884.mlab.com:39884/excubia-faces')
-db = client.test_database
+client = MongoClient('mongodb://excubia:Incredible54-@ds139884.mlab.com:39884/excubia-faces')
+db = client['excubia-faces']
 print(db)
-collection = db.test_collection
+collection = db.alpha
 print(collection)
+
+print(collection.index_information())
 
 class VideoCamera(object):
     def __init__(self):
@@ -57,7 +59,7 @@ class VideoCamera(object):
             # loop over the (x, y)-coordinates for the facial landmark and draw
             for (x, y) in shape:
                 cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
-                print("({},{})".format(x,y))
+                #print("({},{})".format(x,y))
                 faceLandmarks.append((x,y))
         
         faces = faceCascade.detectMultiScale(
@@ -72,11 +74,12 @@ class VideoCamera(object):
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            post = {"landmarks": []}
             for (s,t) in faceLandmarks:
                 if ( x <= s <= x+s and y <= t <= y+h):
                     # Add to database
-                    pass
-            
+                    post['landmarks'].append([str(s),str(t)])
+            post_id = db.posts.insert_one(post).inserted_id
             # Eyes detection
             #roi_gray = gray[y:y+h, x:x+w]
             #roi_color = image[y:y+h, x:x+w]
@@ -95,6 +98,7 @@ class VideoCamera(object):
 
         return jpeg.tobytes()
 
-    def capture_to_file():
+    def capture_to_file(self):
         os.replace("temp.jpg", "capture.jpg")
+        print("captured")
         return "capture.jpg"
