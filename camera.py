@@ -21,7 +21,7 @@ print(db)
 collection = db.alpha
 print(collection)
 
-print(collection.index_information())
+
 
 class VideoCamera(object):
     def __init__(self):
@@ -58,7 +58,7 @@ class VideoCamera(object):
             shape = face_utils.shape_to_np(shape)
             # loop over the (x, y)-coordinates for the facial landmark and draw
             for (x, y) in shape:
-                cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
+                cv2.circle(image, (x, y), 2, (0, 0, 255), -1)
                 #print("({},{})".format(x,y))
                 faceLandmarks.append((x,y))
         
@@ -79,7 +79,10 @@ class VideoCamera(object):
                 if ( x <= s <= x+s and y <= t <= y+h):
                     # Add to database
                     post['landmarks'].append([str(s),str(t)])
-            post_id = db.posts.insert_one(post).inserted_id
+            try:
+                post_id = db.posts.insert_one(post).inserted_id
+            except Exception as e:
+                pass
             # Eyes detection
             #roi_gray = gray[y:y+h, x:x+w]
             #roi_color = image[y:y+h, x:x+w]
@@ -88,14 +91,15 @@ class VideoCamera(object):
                 #cv2.rectangle(roi_color,(ex, ey),(ex+ew, ey+eh),(255, 0, 255), 2)
         #print ("Number of faces: {}".format(len(faces)))
 
-
+        
+        cv2.putText(image,"Current # of people: "+str(len(faces)),(9,40),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
         ret, jpeg = cv2.imencode('.jpg', image)
-
+        
         #Write to file to temp00.jpg
         cv2.imwrite("temp00.jpg", image)
         #Move the file to temp.jpg when done, ensures temp.jpg is always a complete file
         os.replace("temp00.jpg", "temp.jpg")
-
+        
         return jpeg.tobytes()
 
     def capture_to_file(self):
