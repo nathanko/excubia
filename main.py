@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # http://blog.miguelgrinberg.com/post/video-streaming-with-flask
 
-from flask import Flask, render_template, Response, jsonify, send_from_directory
+from flask import Flask, render_template, Response, jsonify, send_from_directory, send_file
 from camera import VideoCamera
 import cv2
 import os.path
@@ -26,10 +26,13 @@ def gen(camera, action=None):
 def video_feed():
     return Response(gen(VideoCamera()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/capture')
 def capture():
+    filename = VideoCamera().capture_to_file()
+    return send_file(filename, mimetype='image/jpg')
     # cv2.imwrite("capture.jpg", VideoCamera().video.read())
-    return Response(VideoCamera().get_frame(), mimetype='image/jpg')
+    #return Response(VideoCamera().get_frame(), mimetype='image/jpg')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=False)
