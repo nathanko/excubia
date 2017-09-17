@@ -2,19 +2,23 @@
 
 import cv2
 import random
-
-# import the necessary packages
 from imutils import face_utils
 import numpy as np
-import argparse
 import imutils
 import dlib
+import pymongo
+from pymongo import MongoClient
 
 # http://www.pyimagesearch.com/2017/04/17/real-time-facial-landmark-detection-opencv-python-dlib/
 #https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78
 
 args = {'cascPath': 'data/haarcascade_frontalface_default.xml',
         'shape_predictor': 'data/shape_predictor_68_face_landmarks.dat'}
+client = MongoClient('mongodb://excubia:Incredible54@ds139884.mlab.com:39884/excubia-faces')
+db = client.test_database
+print(db)
+collection = db.test_collection
+print(collection)
 
 class VideoCamera(object):
     def __init__(self):
@@ -41,6 +45,8 @@ class VideoCamera(object):
 
         # detect faces in the grayscale frame
         rects = detector(gray, 0)
+        faceLandmarks = []
+
         # loop over the face detections
         for rect in rects:
             # determine the facial landmarks for the face region, then convert
@@ -50,6 +56,8 @@ class VideoCamera(object):
             # loop over the (x, y)-coordinates for the facial landmark and draw
             for (x, y) in shape:
                 cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
+                print("({},{})".format(x,y))
+                faceLandmarks.append((x,y))
         
         faces = faceCascade.detectMultiScale(
             gray,
@@ -63,6 +71,10 @@ class VideoCamera(object):
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            for (s,t) in faceLandmarks:
+                if ( x <= s <= x+s and y <= t <= y+h):
+                    # Add to database
+                    pass
             
             # Eyes detection
             #roi_gray = gray[y:y+h, x:x+w]
