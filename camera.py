@@ -1,6 +1,7 @@
 # camera.py
 
 import cv2
+import random
 
 class VideoCamera(object):
     def __init__(self):
@@ -53,5 +54,9 @@ class VideoCamera(object):
         # so we must encode it into JPEG in order to correctly display the
         # video stream.
         ret, jpeg = cv2.imencode('.jpg', image)
+
+        #Save to file
+        filename = "temp{}.jpg".format(random.randint(1,999))
+        cv2.imwrite("temp.jpg", image)
 
         return jpeg.tobytes()
