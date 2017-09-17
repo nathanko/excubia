@@ -2,6 +2,7 @@
 
 import cv2
 import random
+import os
 from imutils import face_utils
 import numpy as np
 import imutils
@@ -87,8 +88,13 @@ class VideoCamera(object):
 
         ret, jpeg = cv2.imencode('.jpg', image)
 
-        #Save to file
-        filename = "temp{}.jpg".format(random.randint(1,999))
-        cv2.imwrite("temp.jpg", image)
+        #Write to file to temp00.jpg
+        cv2.imwrite("temp00.jpg", image)
+        #Move the file to temp.jpg when done, ensures temp.jpg is always a complete file
+        os.replace("temp00.jpg", "temp.jpg")
 
         return jpeg.tobytes()
+
+    def capture_to_file():
+        os.replace("temp.jpg", "capture.jpg")
+        return "capture.jpg"
